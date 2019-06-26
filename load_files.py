@@ -1,21 +1,26 @@
 import os
-import csv
-
-def load_files(mainFolderPath):
-    data = {'business' : [], 'entertainment' : [], 'politics' : [] , 'sport' : [], 'tech' : [] }
-    folders = [folder for folder in sorted(os.listdir(mainFolderPath))]
-    for folder in folders :
-        for file in os.listdir(mainFolderPath + "/" + folder):
-            data[folder].append(file)
-    return data
-
-
-mainFolder = "C:/Users/Medini R/Desktop/bbc"
-bbc_data = load_files(mainFolder)
-print(bbc_data)
-
-
 import pandas as pd
+import csv
+mainFolder = "C:/Users/Medini R/Desktop/bbc"
 
-bbc_df = pd.DataFrame.from_dict(bbc_data, orient = 'index')
-print(bbc_df)
+folders = ["business","entertainment","politics","sport","tech"]
+
+os.chdir(mainFolder)
+
+x = []
+y = []
+
+for folder in folders:
+    files = os.listdir(folder)
+    for text_file in files:
+        path = folder + "/" + text_file
+        x.append(open(path).readlines())
+        y.append(folder)
+   
+bbc_dict = {'category': y, 'article': x}  
+bbc_df = pd.DataFrame(bbc_dict)
+bbc_df = bbc_df.sort_values(by = 'article')
+bbc_df.to_csv('../bbc_dataset.csv', index=False)
+
+bbc = pd.read_csv('../bbc_dataset.csv')
+bbc.head(2225)
